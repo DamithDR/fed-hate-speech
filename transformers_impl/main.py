@@ -122,10 +122,10 @@ def main():
     if 'olid' or 'davidson' or 'hasoc' or 'hatexplain' in datasets:
         federated_experiments = True
         for d_set in datasets:
-            train = pd.read_csv(f'../../FederatedOffense/ft_{d_set}.csv',
+            train = pd.read_csv(f'../FederatedOffense/ft_{d_set}.csv',
                                 sep='\t')  # using finetune set for client training
             train, valid = train_test_split(train, test_size=0.1, random_state=777)
-            test = pd.read_csv(f'../../FederatedOffense/data/{d_set}/{d_set}_test.csv', sep='\t')
+            test = pd.read_csv(f'../FederatedOffense/data/{d_set}/{d_set}_test.csv', sep='\t')
             raw_data.append(
                 {
                     "train": train,
