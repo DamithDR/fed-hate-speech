@@ -11,8 +11,8 @@ from sklearn.metrics import (
 from torch.utils.data import DataLoader
 from transformers import DataCollatorWithPadding, AdamW
 
-from data import *
-from utils import *
+from transformers_impl.data import *
+from transformers_impl.utils import *
 
 
 class FedTrainer:
