@@ -49,6 +49,7 @@ def get_categories(dataset_type):
 
 
 def create_data_iter(df, category_dict, tokenizer, input_col="text", target_col="category"):
+    print(category_dict)
     r""" Creates data iterator as list of tuple consisting of `text` and `category`.
     """
     # maps category to the corresponding integer
