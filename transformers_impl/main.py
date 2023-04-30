@@ -120,8 +120,7 @@ def main():
 
     federated_experiments = False
     raw_data = []
-    if datasets.contains('olid') or datasets.contains('davidson') or datasets.contains('hasoc') or datasets.contains(
-            'hatexplain'):
+    if 'olid' in datasets or 'davidson' in datasets or 'hasoc' in datasets or 'hatexplain' in datasets:
         print('federated experiments activated')
         federated_experiments = True
         for d_set in datasets:
