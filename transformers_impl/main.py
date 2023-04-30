@@ -113,6 +113,7 @@ def main():
     # reproducibility set seed
     set_seed(args.seed)
     datasets = args.datasets.split(',')
+    print(f'datasets = {datasets}')
     if len(datasets) != int(args.K):
         logging.error("datasets size does not match with no of clients")
         sys.exit(1)
