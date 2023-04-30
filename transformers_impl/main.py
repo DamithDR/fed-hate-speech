@@ -11,14 +11,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.utils import class_weight
 import torch
 import torch.nn as nn
-from transformers import (
+from transformers_impl import (
     AutoTokenizer,
     AutoModelForSequenceClassification,
     set_seed,
 )
 from data import *
 from trainer import *
-from transformers.trainer_extended import FedTrainerExtended
+from transformers_impl.trainer_extended import FedTrainerExtended
 from utils import *
 
 # command-line arguments
