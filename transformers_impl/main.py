@@ -11,7 +11,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.utils import class_weight
 import torch
 import torch.nn as nn
-from transformers_impl import (
+from transformers import (
     AutoTokenizer,
     AutoModelForSequenceClassification,
     set_seed,

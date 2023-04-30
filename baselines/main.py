@@ -11,7 +11,7 @@ from sklearn.utils import class_weight
 import torch
 import torch.nn as nn
 from torchtext.data.utils import get_tokenizer
-from transformers_impl import set_seed
+from transformers import set_seed
 from model import *
 from trainer import *
 from data import *

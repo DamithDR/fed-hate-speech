@@ -11,7 +11,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
-from transformers_impl import DataCollatorWithPadding, AdamW
+from transformers import DataCollatorWithPadding, AdamW
 from data import *
 from utils import *
 
