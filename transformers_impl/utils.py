@@ -39,6 +39,6 @@ def get_model_ckpt(model_type):
     elif model_type == "fnet":
         return "google/fnet-base"
     elif model_type == "fused_model":
-        return "../../FederatedOffence/model_davidson_model_olid/"
+        return "../FederatedOffence/model_davidson_model_olid/"
     else:
         raise NotImplementedError
