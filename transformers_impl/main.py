@@ -25,7 +25,7 @@ parser.add_argument(
     "--dataset_type",
     type=str,
     default="federated_offence",
-    choices=["comb", "vidgen_binary", "vidgen_multiclass","federated_offence"],
+    choices=["comb", "vidgen_binary", "vidgen_multiclass", "federated_offence"],
     help="which dataset to run the experiment with",
 )
 parser.add_argument(
@@ -163,12 +163,12 @@ def main():
         dataset = []
         for data_element in raw_data:
             dataset.append({
-                "train": create_data_iter(data_element["train"], category2id, tokenizer, input_col='Text',
-                                          target_col='Class'),
-                "valid": create_data_iter(data_element["valid"], category2id, tokenizer, input_col='Text',
-                                          target_col='Class'),
-                "test": create_data_iter(data_element["test"], category2id, tokenizer, input_col='Text',
-                                         target_col='Class'),
+                "train": create_data_iter(data_element["train"], category2id, tokenizer, input_col='text',
+                                          target_col='labels'),
+                "valid": create_data_iter(data_element["valid"], category2id, tokenizer, input_col='text',
+                                          target_col='labels'),
+                "test": create_data_iter(data_element["test"], category2id, tokenizer, input_col='text',
+                                         target_col='labels'),
             })
     else:
         dataset = {
