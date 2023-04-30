@@ -18,6 +18,7 @@ from transformers import (
 )
 from data import *
 from trainer import *
+from transformers.trainer_extended import FedTrainerExtended
 from utils import *
 
 # command-line arguments
@@ -243,14 +244,12 @@ def main():
     with open(os.path.join(args.save, "config.json"), "w") as fp:
         json.dump(config_dict, fp=fp, indent=2)
 
-    fl_trainer = FedTrainer(
+    fl_trainer = FedTrainerExtended(
         args,
         tokenizer,
         model,
         local_data_idxs=iid_data_dict,
-        train_data=dataset["train"],
-        val_data=dataset["valid"],
-        test_data=dataset["test"],
+        dataset = dataset
     )
     model = fl_trainer.train()
 
