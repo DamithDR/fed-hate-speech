@@ -24,8 +24,8 @@ parser.add_argument("--data", type=str, default="data", help="location of the da
 parser.add_argument(
     "--dataset_type",
     type=str,
-    default="comb",
-    choices=["comb", "vidgen_binary", "vidgen_multiclass"],
+    default="federated_offence",
+    choices=["comb", "vidgen_binary", "vidgen_multiclass","federated_offence"],
     help="which dataset to run the experiment with",
 )
 parser.add_argument(
