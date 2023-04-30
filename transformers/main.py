@@ -7,6 +7,7 @@ import logging
 import argparse
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import train_test_split
 from sklearn.utils import class_weight
 import torch
 import torch.nn as nn
@@ -73,6 +74,8 @@ parser.add_argument(
 )
 parser.add_argument("--es_patience", type=int, default=10, help="early stopping patience level")
 parser.add_argument("--save", type=str, default="exp", help="experiment name")
+parser.add_argument("--datasets", type=str, required=True, help="comma seperated names of the datasets")
+parser.add_argument("--cuda_device", type=int, default=0, required=False, help="cuda device number")
 args = parser.parse_args()
 
 # proximal term is 0.0 in case of fedavg
@@ -89,7 +92,6 @@ args.save = "{}-{}".format(args.save, time.strftime("%Y%m%d-%H%M%S"))
 if not os.path.exists(args.save):
     os.mkdir(args.save)
 print("Experiment dir: {}".format(args.save))
-
 
 log_format = "%(asctime)s %(message)s"
 logging.basicConfig(
@@ -112,17 +114,39 @@ def main():
 
     # reproducibility set seed
     set_seed(args.seed)
+    datasets = args.datasets.split(',')
+    if len(datasets) != int(args.K):
+        logging.error("datasets size does not match with no of clients")
+        sys.exit(1)
 
-    raw_data = {
-        "train": pd.read_csv(os.path.join(args.data, "train.csv")),
-        "valid": pd.read_csv(os.path.join(args.data, "valid.csv")),
-        "test": pd.read_csv(os.path.join(args.data, "test.csv")),
-    }
+    federated_experiments = False
+    raw_data = []
+    if 'olid' or 'davidson' or 'hasoc' or 'hatexplain' in datasets:
+        federated_experiments = True
+        for d_set in datasets:
+            train = pd.read_csv(f'../../FederatedOffense/ft_{d_set}.csv',
+                                sep='\t')  # using finetune set for client training
+            train, valid = train_test_split(train, test_size=0.1, random_state=777)
+            test = pd.read_csv(f'../../FederatedOffense/data/{d_set}/{d_set}_test.csv', sep='\t')
+            raw_data.append(
+                {
+                    "train": train,
+                    "valid": valid,
+                    "test": test
+                }
+            )
+    else:
+        raw_data = {
+            "train": pd.read_csv(os.path.join(args.data, "train.csv")),
+            "valid": pd.read_csv(os.path.join(args.data, "valid.csv")),
+            "test": pd.read_csv(os.path.join(args.data, "test.csv")),
+        }
 
     # ignore abusive category due to insufficient examples
-    for split in raw_data:
-        raw_data[split] = raw_data[split][raw_data[split]["category"] != "abusive"]
-        raw_data[split].reset_index(inplace=True, drop=True)
+    if not federated_experiments:
+        for split in raw_data:
+            raw_data[split] = raw_data[split][raw_data[split]["category"] != "abusive"]
+            raw_data[split].reset_index(inplace=True, drop=True)
 
     # load the tokenizer from huggingface hub
     model_ckpt = get_model_ckpt(args.model_type)
@@ -134,43 +158,73 @@ def main():
     id2category = {idx: cat for idx, cat in enumerate(new_categories)}
     args.class_names = new_categories
 
-    dataset = {
-        "train": create_data_iter(raw_data["train"], category2id, tokenizer),
-        "valid": create_data_iter(raw_data["valid"], category2id, tokenizer),
-        "test": create_data_iter(raw_data["test"], category2id, tokenizer),
-    }
+    # CHANGE THIS
+    if federated_experiments:
+        dataset = []
+        for data_element in raw_data:
+            dataset.append({
+                "train": create_data_iter(data_element["train"], category2id, tokenizer, input_col='Text',
+                                          target_col='Class'),
+                "valid": create_data_iter(data_element["valid"], category2id, tokenizer, input_col='Text',
+                                          target_col='Class'),
+                "test": create_data_iter(data_element["test"], category2id, tokenizer, input_col='Text',
+                                         target_col='Class'),
+            })
+    else:
+        dataset = {
+            "train": create_data_iter(raw_data["train"], category2id, tokenizer),
+            "valid": create_data_iter(raw_data["valid"], category2id, tokenizer),
+            "test": create_data_iter(raw_data["test"], category2id, tokenizer),
+        }
 
     # categorical classes for hate speech data
-    classes = list(np.unique([elem["labels"].item() for elem in dataset["train"]]))
-    class_array = np.array([elem["labels"].item() for elem in dataset["train"]])
+    if federated_experiments:
+        classes = list(
+            np.unique([elem["labels"].item() for elem in dataset[0]["train"]]))  # getting labels from one dataset
+        class_array = np.array([elem["labels"].item() for elem in dataset[0]["train"]])
+    else:
+        classes = list(np.unique([elem["labels"].item() for elem in dataset["train"]]))
+        class_array = np.array([elem["labels"].item() for elem in dataset["train"]])
     num_classes = len(classes)
     args.classes = classes
     args.num_classes = num_classes
 
-    if args.class_weights:
-        class_weights = class_weight.compute_class_weight(
-            class_weight="balanced", classes=classes, y=class_array
-        )
-    else:
+    if federated_experiments:
         class_weights = class_weight.compute_class_weight(
             class_weight="balanced", classes=classes, y=classes
         )
+    else:
+        if args.class_weights:
+            class_weights = class_weight.compute_class_weight(
+                class_weight="balanced", classes=classes, y=class_array
+            )
+        else:
+            class_weights = class_weight.compute_class_weight(
+                class_weight="balanced", classes=classes, y=classes
+            )
     args.class_weights_array = class_weights
     logging.info(f"# of classes: {num_classes}")
-    logging.info(f"class weights: {class_weights}")
-
+    if federated_experiments:
+        logging.info(f"class weights in the first dataset: {class_weights}")
+    else:
+        logging.info(f"class weights: {class_weights}")
     # load the model from huggingface hub
     model = AutoModelForSequenceClassification.from_pretrained(
         model_ckpt, num_labels=num_classes, label2id=category2id, id2label=id2category,
     )
+    # setting devide number
+    torch.cuda.set_device(args.cuda_device)
     if torch.cuda.device_count() > 1:
         model = nn.DataParallel(model)
         model = model.cuda()
     else:
         model.cuda()
 
-    # dict mapping clients to the data samples in iid fashion
-    iid_data_dict = iid_partition(dataset["train"], args.K)
+    if federated_experiments:
+        iid_data_dict = iid_partition_for_federated_offence(dataset,args.K) #pass number of clients
+    else:
+        # dict mapping clients to the data samples in iid fashion
+        iid_data_dict = iid_partition(dataset["train"], args.K)
 
     # log the config for each run
     config_dict = dict(

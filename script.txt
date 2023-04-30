@@ -1,0 +1,1 @@
+python3 main.py --data comb-data --dataset_type comb --rounds 50 --C 1 --E 5 --K 2 --algorithm fedprox --mu 0.01 --client_lr 4e-5 --server_lr 0.0 --model fused_model --batch_size 32 --seed 42 --class_weights --save fused_model_fedprox_c1_e05_k2_r50_class_weighted --datasets davidson,olid --cuda_device 2

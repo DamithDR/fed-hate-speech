@@ -15,6 +15,18 @@ def iid_partition(data, clients):
     return client_dict
 
 
+def iid_partition_for_federated_offence(data, clients):
+    r""" Creates iid partitions of data over clients.
+        """
+    client_dict = {}
+
+    for i in range(clients):
+        data_idxs = list(range(len(data[i]['train'])))
+        client_dict[i] = set(data_idxs)
+
+    return client_dict
+
+
 def get_model_ckpt(model_type):
     if model_type == "distilbert":
         return "distilbert-base-uncased"
@@ -26,5 +38,7 @@ def get_model_ckpt(model_type):
         return "roberta-base"
     elif model_type == "fnet":
         return "google/fnet-base"
+    elif model_type == "fused_model":
+        return "../../FederatedOffence/model_davidson_model_olid/"
     else:
         raise NotImplementedError

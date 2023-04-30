@@ -32,6 +32,8 @@ vidgen_multiclass_data_categories = [
     "support",
 ]
 
+federated_offence_classes = ['OFF', 'NOT']
+
 
 def get_categories(dataset_type):
     if dataset_type == "comb":
@@ -40,6 +42,8 @@ def get_categories(dataset_type):
         return vidgen_binary_data_categories
     elif dataset_type == "vidgen_multiclass":
         return vidgen_multiclass_data_categories
+    elif dataset_type == 'federated_offence':
+        return federated_offence_classes
     else:
         raise NotImplementedError
 
@@ -55,7 +59,7 @@ def create_data_iter(df, category_dict, tokenizer, input_col="text", target_col=
         enc_inputs = tokenizer(df[input_col].iloc[i].lower(), truncation=True, padding=False)
         enc_inputs = {k: torch.tensor(v) for k, v in enc_inputs.items()}
         iterator.append(
-            {**enc_inputs, "labels": torch.tensor(df[target_col].iloc[i]),}
+            {**enc_inputs, "labels": torch.tensor(df[target_col].iloc[i]), }
         )
     return iterator
 
