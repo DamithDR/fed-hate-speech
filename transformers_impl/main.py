@@ -41,7 +41,7 @@ parser.add_argument(
     "--model_type",
     type=str,
     default="distilbert",
-    choices=["fnet", "distilbert", "bert", "distilroberta", "roberta","fused_model"],
+    choices=["fnet", "distilbert", "bert", "distilroberta", "roberta", "fused_model"],
     help="specify which model to use (fnet, distilbert, bert, distilroberta, roberta,fused_model)",
 )
 parser.add_argument("--rounds", type=int, default=1000, help="number of training rounds")
@@ -120,7 +120,9 @@ def main():
 
     federated_experiments = False
     raw_data = []
-    if 'olid' or 'davidson' or 'hasoc' or 'hatexplain' in datasets:
+    if datasets.contains('olid') or datasets.contains('davidson') or datasets.contains('hasoc') or datasets.contains(
+            'hatexplain'):
+        print('federated experiments activated')
         federated_experiments = True
         for d_set in datasets:
             train = pd.read_csv(f'../FederatedOffense/ft_{d_set}.csv',
@@ -220,7 +222,7 @@ def main():
         model.cuda()
 
     if federated_experiments:
-        iid_data_dict = iid_partition_for_federated_offence(dataset,args.K) #pass number of clients
+        iid_data_dict = iid_partition_for_federated_offence(dataset, args.K)  # pass number of clients
     else:
         # dict mapping clients to the data samples in iid fashion
         iid_data_dict = iid_partition(dataset["train"], args.K)
@@ -247,7 +249,7 @@ def main():
         tokenizer,
         model,
         local_data_idxs=iid_data_dict,
-        dataset = dataset
+        dataset=dataset
     )
     model = fl_trainer.train()
 
