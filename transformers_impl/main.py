@@ -161,7 +161,6 @@ def main():
     print(category2id)
     print(id2category)
 
-    # CHANGE THIS
     if federated_experiments:
         dataset = []
         for data_element in raw_data:
