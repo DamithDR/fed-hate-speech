@@ -41,8 +41,8 @@ parser.add_argument(
     "--model_type",
     type=str,
     default="distilbert",
-    choices=["fnet", "distilbert", "bert", "distilroberta", "roberta"],
-    help="specify which model to use (fnet, distilbert, bert, distilroberta, roberta)",
+    choices=["fnet", "distilbert", "bert", "distilroberta", "roberta","fused_model"],
+    help="specify which model to use (fnet, distilbert, bert, distilroberta, roberta,fused_model)",
 )
 parser.add_argument("--rounds", type=int, default=1000, help="number of training rounds")
 parser.add_argument("--C", type=float, default=0.1, help="client fraction")
