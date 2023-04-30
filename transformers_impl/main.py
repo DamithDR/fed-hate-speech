@@ -158,6 +158,9 @@ def main():
     id2category = {idx: cat for idx, cat in enumerate(new_categories)}
     args.class_names = new_categories
 
+    print(category2id)
+    print(id2category)
+
     # CHANGE THIS
     if federated_experiments:
         dataset = []
