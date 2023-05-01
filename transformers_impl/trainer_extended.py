@@ -33,7 +33,6 @@ class FedTrainerExtended:
         self.local_data_idxs = local_data_idxs
         self.dataset = dataset
 
-        print(dataset[0])
         # initialize the server optimizer according to the aggregation algorithm
         self._init_opt()
 
@@ -66,7 +65,7 @@ class FedTrainerExtended:
                 client = Client(
                     self.args,
                     epoch,
-                    self.dataset[client_idxs]['train'],
+                    self.dataset[client_idx]['train'],
                     self.local_data_idxs[client_idx],
                     self.tokenizer,
                 )
