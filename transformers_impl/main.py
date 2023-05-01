@@ -214,7 +214,7 @@ def main():
     # setting devide number
     torch.cuda.set_device(args.cuda_device)
     if torch.cuda.device_count() > 1:
-        model = nn.DataParallel(model)
+        # model = nn.DataParallel(model)#removing
         model = model.cuda()
     else:
         model.cuda()

@@ -144,20 +144,22 @@ class FedTrainerExtended:
                     best_f1_loss = val_metrics["valid/f1_score"]
                     patience = 0
                     # save the model and tokenizer
-                    if torch.cuda.device_count() > 1:
-                        self.model.module.save_pretrained(self.args.save)
-                    else:
-                        self.model.save_pretrained(self.args.save)
+                    # if torch.cuda.device_count() > 1:
+                    #     self.model.module.save_pretrained(self.args.save)
+                    # else:
+                    #     self.model.save_pretrained(self.args.save)
+                    self.model.save_pretrained(self.args.save)
                     self.tokenizer.save_pretrained(self.args.save)
                 else:
                     patience += 1
                     logging.info(f"Early stopping counter {patience} out of {self.args.es_patience}")
                     if patience == self.args.es_patience:
                         # load the model and tokenizer with best performance
-                        if torch.cuda.device_count() > 1:
-                            self.model.module.from_pretrained(self.args.save)
-                        else:
-                            self.model.from_pretrained(self.args.save)
+                        # if torch.cuda.device_count() > 1:
+                        #     self.model.module.from_pretrained(self.args.save)
+                        # else:
+                        #     self.model.from_pretrained(self.args.save)
+                        self.model.from_pretrained(self.args.save)
                         self.tokenizer.from_pretrained(self.args.save)
                         # evaluate the model on test set
                         test_metrics_lst, test_loss_lst = self.eval(stage="test")
@@ -172,10 +174,11 @@ class FedTrainerExtended:
                 # finally evaluate the model on the test set
                 if round_idx == self.args.rounds:
                     # load the model and tokenizer with best performance
-                    if torch.cuda.device_count() > 1:
-                        self.model.module.from_pretrained(self.args.save)
-                    else:
-                        self.model.from_pretrained(self.args.save)
+                    # if torch.cuda.device_count() > 1:
+                    #     self.model.module.from_pretrained(self.args.save)
+                    # else:
+                    #     self.model.from_pretrained(self.args.save)
+                    self.model.from_pretrained(self.args.save)
                     self.tokenizer.from_pretrained(self.args.save)
                     # evaluate the model on test set
                     test_metrics_lst, test_loss_lst = self.eval(stage="test")
