@@ -67,7 +67,7 @@ class FedTrainerExtended:
                 client = Client(
                     self.args,
                     epoch,
-                    self.train_data[client_idxs]['train'],
+                    self.dataset[client_idxs]['train'],
                     self.local_data_idxs[client_idx],
                     self.tokenizer,
                 )
