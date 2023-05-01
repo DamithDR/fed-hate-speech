@@ -166,8 +166,8 @@ def main():
                                           target_col='labels'),
                 "valid": create_data_iter(data_element["valid"], category2id, tokenizer, input_col='text',
                                           target_col='labels'),
-                "test": create_data_iter(data_element["test"], category2id, tokenizer, input_col='text',
-                                         target_col='labels'),
+                "test": create_data_iter(data_element["test"], category2id, tokenizer, input_col='Text',
+                                         target_col='Class'),
             })
     else:
         dataset = {
