@@ -64,7 +64,7 @@ class FedTrainerExtended:
             # issue, we accumulate the local client updates and normalize by number of clients.
             start = True
             for client_idx, epoch in zip(client_idxs, client_epoch_list):
-                print(f'client_idx = {client_idx}')
+                print(f'client_idx = {client_idx} and type {type(client_idx)}')
                 client = Client(
                     self.args,
                     epoch,
