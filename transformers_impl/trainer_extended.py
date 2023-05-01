@@ -32,10 +32,8 @@ class FedTrainerExtended:
         self.model = model
         self.local_data_idxs = local_data_idxs
         self.dataset = dataset
-        # self.train_data = train_data
-        # self.val_data = val_data
-        # self.test_data = test_data
 
+        dataset.to_csv('test_dataset_file.csv',sep='\t',index=False)
         # initialize the server optimizer according to the aggregation algorithm
         self._init_opt()
 
