@@ -33,7 +33,7 @@ class FedTrainerExtended:
         self.local_data_idxs = local_data_idxs
         self.dataset = dataset
 
-        dataset.to_csv('test_dataset_file.csv',sep='\t',index=False)
+        print(dataset[0])
         # initialize the server optimizer according to the aggregation algorithm
         self._init_opt()
 
