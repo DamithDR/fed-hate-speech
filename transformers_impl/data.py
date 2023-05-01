@@ -53,8 +53,8 @@ def create_data_iter(df, category_dict, tokenizer, input_col="text", target_col=
     r""" Creates data iterator as list of tuple consisting of `text` and `category`.
     """
     # maps category to the corresponding integer
-    df[target_col] = df[target_col].apply(lambda x: category_dict[x], axis=1)
-    df.to_csv('test_output.csv',sep='\t',index=False)
+    df.to_csv('test_output.csv', sep='\t', index=False)
+    df[target_col] = df[target_col].tolist().apply(lambda x: category_dict[x])
     # iterate over the data and tokenize the samples
     iterator = []
     for i in range(len(df)):
